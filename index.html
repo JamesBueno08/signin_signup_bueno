@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"
+      integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+
+    <title>Authentication is Fun</title>
+    <style>
+      body {
+        text-align: center;
+        background-color: lightseagreen;
+        color: black;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="authForm">
+      <h2>Sign Up or Sign In</h2>
+      <input type="email" placeholder="email" id="userEmail" />
+      <input type="password" placeholder="password" id="userPassword" />
+      <br /><br />
+      <button id="signUpButton">Sign Up</button>
+      <button id="signInButton">Sign In</button>
+    </div>
+
+    <div id="secretContent">
+      <h3>Welcome to secret page only 4 u</h3>
+      <h1>ONLYBAMES</h1>
+       <div class="container mt-5">
+      <div class="row">
+        <div class="col-sm-4">
+          <h3>Los Angeles</h3>
+          <p>
+            Retro Los Angeles City refers to a nostalgic portrayal or revival of
+            the cultural aesthetics, design elements, and lifestyle of Los
+            Angeles during a past era, typically the mid-20th century. It often
+            emphasizes vintage fashion, architecture, music, and pop culture
+            from the 1940s to the 1970s, evoking a sense of nostalgia and charm
+            associated with that period.
+          </p>
+          <p></p>
+        </div>
+        <div class="col-sm-4">
+          <h3>Chicago</h3>
+          <p>
+            Retro Chicago City captures the essence of vintage Chicago from the
+            mid-20th century, showcasing its distinctive architecture, fashion,
+            music, and cultural scene from the 1920s through the 1960s. It
+            celebrates the city's historical legacy and iconic landmarks while
+            evoking a sense of nostalgia for a bygone era.
+          </p>
+          <p></p>
+        </div>
+        <div class="col-sm-4">
+          <h3>New York</h3>
+          <p>
+            Retro New York City encapsulates the cultural, architectural, and
+            aesthetic elements of vintage New York from the mid-20th century,
+            particularly the 1940s through the 1970s. It highlights the city's
+            iconic landmarks, fashion, music, and pop culture, offering a
+            nostalgic glimpse into its vibrant past.
+          </p>
+        </div>
+      <button id="signOutButton">Sign Out</button>
+    </div>
+
+    <script type="module">
+      //Update the below URL with the appropriate version if necessary.
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+      import {
+        getAuth,
+        createUserWithEmailAndPassword,
+        signInWithEmailAndPassword,
+        onAuthStateChanged,
+        signOut,
+        //Update the below URL with the appropriate version if necessary.
+      } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-auth.js";
+
+      // INSERT YOUR FIREBASE CONFIG OBJECT HERE
+      const firebaseConfig = {
+        apiKey: "AIzaSyBgo0ZSpoWRpeoZI7S6UEqwK7vpp6OR7tE",
+        authDomain: "authentication-b800f.firebaseapp.com",
+        projectId: "authentication-b800f",
+        storageBucket: "authentication-b800f.appspot.com",
+        messagingSenderId: "654549443352",
+        appId: "1:654549443352:web:1ddeb31ad77ffe8574f46d",
+        measurementId: "G-6CGRHWNPNT",
+      };
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      const userEmail = document.querySelector("#userEmail");
+      const userPassword = document.querySelector("#userPassword");
+      const authForm = document.querySelector("#authForm");
+      const secretContent = document.querySelector("#secretContent");
+      const signUpButton = document.querySelector("#signUpButton");
+      const signInButton = document.querySelector("#signInButton");
+      const signOutButton = document.querySelector("#signOutButton");
+
+      secretContent.style.display = "none";
+
+      const userSignUp = async () => {
+        const signUpEmail = userEmail.value;
+        const signUpPassword = userPassword.value;
+        createUserWithEmailAndPassword(auth, signUpEmail, signUpPassword)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            console.log(user);
+            Swal.fire("Your Account is succesfully created!");
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode + errorMessage);
+          });
+      };
+
+      const userSignIn = async () => {
+        const signInEmail = userEmail.value;
+        const signInPassword = userPassword.value;
+        signInWithEmailAndPassword(auth, signInEmail, signInPassword)
+          .then((userCredential) => {
+            const user = userCredential.user;
+            Swal.fire("You have signed in successfully!");
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode + errorMessage);
+          });
+      };
+
+      const checkAuthState = async () => {
+        onAuthStateChanged(auth, (user) => {
+          if (user) {
+            authForm.style.display = "none";
+            secretContent.style.display = "block";
+          } else {
+            authForm.style.display = "block";
+            secretContent.style.display = "none";
+          }
+        });
+      };
+
+      const userSignOut = async () => {
+        await signOut(auth);
+        Swal.fire("User Logout");
+      };
+
+      checkAuthState();
+
+      signUpButton.addEventListener("click", userSignUp);
+      signInButton.addEventListener("click", userSignIn);
+      signOutButton.addEventListener("click", userSignOut);
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </body>
+</html>
